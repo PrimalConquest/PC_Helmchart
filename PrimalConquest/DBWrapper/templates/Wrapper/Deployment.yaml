@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{- include "database.wrapper.deployment.name" . }}
+  namespace: {{ .Values.global.namespace}}
+  labels:
+    {{- include "database.wrapper.labels" . | nindent 4 }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "database.wrapper.labels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "database.wrapper.labels" . | nindent 8 }}
+    spec:
+      containers:
+        - name: {{ .Values.dbWrapper.name }}
+          image: {{ include "database.wrapper.image" . }}
+          imagePullPolicy: {{ .Values.global.imagePullPolicy }}
+          ports:
+            - containerPort: {{ .Values.dbWrapper.service.port }}
+          env:
+            - name: ASPNETCORE_URLS
+              value: "http://+:{{ .Values.dbWrapper.service.port }}"
+            - name: DB_HOST
+              value: {{ include "database.postgres.service.name" . }}
+            - name: DB_PORT
+              value: {{ .Values.postgres.port }}
+            - name: DB_NAME
+              value: {{ .Values.postgres.name }}
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.dbsecret.name }}
+                  key: {{ .Values.dbsecret.usernameKey }}
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.dbsecret.name }}
+                  key: {{ .Values.dbsecret.passwordKey }}
+          resources:
+            requests:
+              cpu: {{ .Values.dbWrapper.resources.requests.cpu | quote }}
+              memory: {{ .Values.dbWrapper.resources.requests.memory | quote }}
+            limits:
+              cpu: {{ .Values.dbWrapper.resources.limits.cpu | quote }}
+              memory: {{ .Values.dbWrapper.resources.limits.memory | quote }}
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: {{ .Values.dbWrapper.service.port }}
+            initialDelaySeconds: 10
+            periodSeconds: 5

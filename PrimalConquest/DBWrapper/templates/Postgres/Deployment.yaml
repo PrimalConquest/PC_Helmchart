@@ -1,0 +1,60 @@
+{{- if .Values.postgres.enabled }}
+
+apiVersion: v1
+kind: Deployment
+metadata:
+  name:  {{- include "database.postgres.deployment.name" . }}
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    {{- include "database.postgres.labels" . | nindent 4 }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "database.postgres.labels" . | nindent 6 }}
+  strategy:
+    type: Recreate             # only one postgres pod at a time — avoid split-brain
+  template:
+    metadata:
+      labels:
+        {{- include "database.postgres.labels" . | nindent 8 }}
+    spec:
+      containers:
+        - name: {{.Values.postgres.name }}
+          image: {{ .Values.postgres.image }}
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_DB
+              value: {{ .Values.postgres.name }}
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.dbsecret.name }}
+                  key: {{ .Values.dbsecret.usernameKey }}
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.dbsecret.name }}
+                  key: {{ .Values.dbsecret.passwordKey }}
+          volumeMounts:
+            - name: postgres-data
+              mountPath: /var/lib/postgresql/data
+          resources:
+            requests:
+              cpu: {{ .Values.postgres.resources.requests.cpu }}
+              memory: {{ .Values.postgres.resources.requests.memory }}
+            limits:
+              cpu: {{ .Values.postgres.resources.limits.cpu }}
+              memory: {{ .Values.postgres.resources.limits.memory }}
+          readinessProbe:
+            exec:
+              command: ["pg_isready", "-U", {{ .Values.dbsecret.username }}]
+            initialDelaySeconds: 10
+            periodSeconds: 5
+      volumes:
+        - name: postgres-data
+          persistentVolumeClaim:
+            claimName: {{- include "database.postgres.pvc.name" . }}
+
+{{- end }}

@@ -1,0 +1,45 @@
+global:
+  registry: ad04a
+  imagePullPolicy: Always
+  namespace: db-wrapper
+ 
+
+
+dbWrapper:
+  name: database-wrapper
+  image:
+    repository: primal-conquest-db-wrapper
+    tag: latest
+  service:
+    port: 5000
+  resources:
+    requests:
+      cpu: "50m"
+      memory: "64Mi"
+    limits:
+      cpu: "200m"
+      memory: "256Mi"
+
+
+
+dbsecret:
+  name: postgres-secret
+  usernameKey: username
+  passwordKey: password
+
+
+postgres:
+  enabled: true
+  port: 5432
+  name: gamedb
+  image: postgres:18-alpine
+  storage: 5Gi
+  service:
+    name: postgres-svc
+  resources:
+    requests:
+      cpu: "100m"
+      memory: "256Mi"
+    limits:
+      cpu: "500m"
+      memory: "512Mi"

@@ -1,0 +1,19 @@
+{{- if .Values.postgres.enabled }}
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{- include "database.postgres.pvc.name" . }}
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    {{- include "database.postgres.labels" . | nindent 4 }}
+  annotations:
+    helm.sh/resource-policy: keep   # survive helm uninstall — protect player data
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{ .Values.postgres.storage }}
+
+{{- end }}

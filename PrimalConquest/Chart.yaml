@@ -1,0 +1,33 @@
+apiVersion: v2
+name: game-platform
+description: >
+  Umbrella Helm chart for the SimulationEngine game platform.
+  Installs Agones fleet + autoscaler, PostgreSQL, the Database Service,
+  and the Matchmaking Service in one release.
+type: application
+version: 0.1.0
+appVersion: "1.0.0"
+ 
+dependencies:
+  # Agones itself — pulled from the official Agones Helm repo
+  - name: agones
+    version: "1.40.0"
+    repository: "https://agones.dev/chart/stable"
+    condition: agones.enabled
+ 
+  # Our own subcharts (local, under charts/)
+  #- name: agones-config
+  #  version: "0.1.0"
+  #  repository: "file://charts/agones-config"
+  #  condition: agonesConfig.enabled
+ 
+  - name: database
+    version: "0.1.0"
+    repository: "file://./DBWrapper"
+    condition: database.enabled
+ 
+  #- name: matchmaking
+  #  version: "0.1.0"
+  #  repository: "file://charts/matchmaking"
+  #  condition: matchmaking.enabled
+ 

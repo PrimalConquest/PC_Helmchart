@@ -1,0 +1,82 @@
+# ── Global settings shared across all subcharts ──────────────────────────────
+global:
+  registry: ad04a       
+  imagePullPolicy: Always
+  namespace: PrimalConquest
+ 
+# ── Agones (upstream chart) ───────────────────────────────────────────────────
+agones:
+  enabled: true
+  # Pass-through values for the upstream agones chart.
+  # Full list: https://agones.dev/site/docs/installation/install-agones/helm/
+  agones:
+    featureGates: ""
+  gameservers:
+    namespaces:
+      - PrimalConquest
+ 
+# ── Agones Fleet + Autoscaler (our subchart) ─────────────────────────────────
+#agonesConfig:
+#  enabled: true
+# 
+#  fleet:
+#    name: battle-server-fleet
+#    replicas: 2                   # warm pool size
+#    image:
+#      repository: battle-server   # prepended with global.registry
+#      tag: latest
+#    port:
+#      name: signalr
+#      containerPort: 8080
+#    resources:
+#      requests:
+#        cpu: "100m"
+#        memory: "128Mi"
+#      limits:
+#        cpu: "500m"
+#        memory: "512Mi"
+#    health:
+#      initialDelaySeconds: 30
+#      periodSeconds: 10
+#      failureThreshold: 5
+# 
+#  autoscaler:
+#    bufferSize: 2
+#    minReplicas: 2
+#    maxReplicas: 20
+ 
+# ── Database subchart ─────────────────────────────────────────────────────────
+database:
+  enabled: true
+#  
+#  dbWrapper:
+#    name: database-wrapper
+#    image:
+#      repository: primal-conquest-db-wrapper
+#      tag: latest
+#    service:
+#      port: 5000
+#    resources:
+#      requests:
+#        cpu: "50m"
+#        memory: "64Mi"
+#      limits:
+#        cpu: "200m"
+#        memory: "256Mi"
+
+
+#postgres:
+#  enabled: true
+#  port: 5432
+#  name: gamedb
+#  image: postgres:18-alpine
+#  storage: 5Gi
+#  service:
+#    name: postgres-svc
+#  resources:
+#    requests:
+#      cpu: "100m"
+#      memory: "256Mi"
+#    limits:
+#      cpu: "500m"
+#      memory: "512Mi"
