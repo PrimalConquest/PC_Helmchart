@@ -1,24 +1,24 @@
-{{- if .Values.ingress.enabled }}
+{{- if .values.ingress.enabled }}
 
 # ── HTTP IngressRoute — redirect everything to HTTPS ─────────────────────────
 apiVersion: traefik.io/v1alpha1
 kind: IngressRoute
 metadata:
   name: {{ .Release.Name }}-http
-  namespace: {{ .Values.global.namespace }}
+  namespace: {{ .values.global.namespace }}
   labels:
     app: {{ .Release.Name }}
 spec:
   entryPoints:
     - web
   routes:
-    - match: Host(`{{ .Values.ingress.host }}`)
+    - match: Host(`{{ .values.ingress.host }}`)
       kind: Rule
       middlewares:
         - name: {{ .Release.Name }}-redirect-https
       #services:
       #  - name: {{ .Release.Name }}-matchmaking
-      #    port: {{ .Values.matchmaking.service.port }}
+      #    port: {{ .values.matchmaking.service.port }}
  
 ---
 # ── HTTPS IngressRoute — main routing ────────────────────────────────────────
@@ -26,54 +26,54 @@ apiVersion: traefik.io/v1alpha1
 kind: IngressRoute
 metadata:
   name: {{ .Release.Name }}-https
-  namespace: {{ .Values.global.namespace }}
+  namespace: {{ .values.global.namespace }}
   labels:
     app: {{ .Release.Name }}
 spec:
   entryPoints:
     - websecure
-  {{- if .Values.ingress.tls.enabled }}
+  {{- if .values.ingress.tls.enabled }}
   tls:
-    secretName: {{ .Values.ingress.tls.secretName }}
+    secretName: {{ .values.ingress.tls.secretName }}
   {{- end }}
   routes:
     # Matchmaking queue (public)
-    - match: Host(`{{ .Values.ingress.host }}`) && PathPrefix(`/api/matchmaking`)
+    - match: Host(`{{ .values.ingress.host }}`) && PathPrefix(`/api/matchmaking`)
       kind: Rule
       middlewares:
         - name: {{ .Release.Name }}-strip-prefix
         - name: {{ .Release.Name }}-ratelimit
       services:
         - name: {{ .Release.Name }}-matchmaking
-          port: {{ .Values.matchmaking.service.port }}
+          port: {{ .values.matchmaking.service.port }}
  
     # Loadout CRUD (admin/internal only)
-    - match: Host(`{{ .Values.ingress.host }}`) && PathPrefix(`/api/loadout`)
+    - match: Host(`{{ .values.ingress.host }}`) && PathPrefix(`/api/loadout`)
       kind: Rule
       middlewares:
         - name: {{ .Release.Name }}-strip-prefix
         #- name: {{ .Release.Name }}-admin-allowlist
       services:
         - name: {{ .Release.Name }}-database
-          port: {{ .Values.dbWrapper.service.port }}
+          port: {{ .values.dbWrapper.service.port }}
  
-{{- if .Values.ingress.tls.certManager.enabled }}
+{{- if .values.ingress.tls.certManager.enabled }}
 ---
 # ── cert-manager Certificate ──────────────────────────────────────────────────
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
   name: {{ .Release.Name }}-tls-cert
-  namespace: {{ .Values.global.namespace }}
+  namespace: {{ .values.global.namespace }}
   labels:
     app: {{ .Release.Name }}
 spec:
-  secretName: {{ .Values.ingress.tls.secretName }}
+  secretName: {{ .values.ingress.tls.secretName }}
   issuerRef:
-    name: {{ .Values.ingress.tls.certManager.issuerName }}
-    kind: {{ .Values.ingress.tls.certManager.issuerKind }}
+    name: {{ .values.ingress.tls.certManager.issuerName }}
+    kind: {{ .values.ingress.tls.certManager.issuerKind }}
   dnsNames:
-    - {{ .Values.ingress.host }}
+    - {{ .values.ingress.host }}
 {{- end }}
 
 

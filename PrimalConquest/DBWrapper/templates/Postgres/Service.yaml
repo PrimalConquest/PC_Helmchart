@@ -1,17 +1,17 @@
-{{- if .Values.postgres.enabled }}
+{{- if .values.postgres.enabled }}
 
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{- include "database.postgres.service.name" . }}
-  namespace: {{ .Values.global.namespace }}
+  name: {{ include "database.postgres.service.name" . }}
+  namespace: {{ .values.global.namespace }}
   labels:
     {{- include "database.postgres.labels" . | nindent 4 }}
 spec:
   selector:
     {{- include "database.postgres.labels" . | nindent 4 }}
   ports:
-    - port: {{ .Values.postgres.port }}
+    - port: {{ .values.postgres.port }}
       targetPort: 5432
   type: ClusterIP
 

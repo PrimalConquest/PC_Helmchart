@@ -1,10 +1,10 @@
-{{- if .Values.postgres.enabled }}
+{{- if .values.postgres.enabled }}
 
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: {{- include "database.postgres.pvc.name" . }}
-  namespace: {{ .Values.global.namespace }}
+  name: {{ include "database.postgres.pvc.name" . }}
+  namespace: {{ .values.global.namespace }}
   labels:
     {{- include "database.postgres.labels" . | nindent 4 }}
   annotations:
@@ -14,6 +14,6 @@ spec:
     - ReadWriteOnce
   resources:
     requests:
-      storage: {{ .Values.postgres.storage }}
+      storage: {{ .values.postgres.storage }}
 
 {{- end }}

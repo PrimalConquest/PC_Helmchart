@@ -1,9 +1,9 @@
-{{- if .Values.postgres.enabled }}
+{{- if .values.postgres.enabled }}
 apiVersion: v1
 kind: Secret
 metadata:
-  name: {{ .Values.dbsecret.name }}
-  namespace: {{ .Values.global.namespace }}
+  name: {{ .values.dbsecret.name }}
+  namespace: {{ .values.global.namespace }}
   labels:
     {{- include "database.labels" . | nindent 4 }}
   annotations:
@@ -11,6 +11,6 @@ metadata:
     helm.sh/resource-policy: keep
 type: Opaque
 stringData:
-  username: {{ .Values.dbsecret.username }}
-  password: {{ .Values.dbsecret.password }}
+  username: {{ .values.dbsecret.username }}
+  password: {{ .values.dbsecret.password }}
 {{- end }}

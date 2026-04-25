@@ -1,14 +1,14 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{- include "database.wrapper.service.name" . }}
-  namespace: {{ .Values.global.namespace }}
+  name: {{ include "database.wrapper.service.name" . }}
+  namespace: {{ .values.global.namespace }}
   labels:
-    {{- include "database.labels.wrapper" . | nindent 4 }}
+    {{- include "database.wrapper.labels" . | nindent 4 }}
 spec:
   selector:
-    {{- include "database.labels.wrapper" . | nindent 4 }}
+    {{- include "database.wrapper.labels" . | nindent 4 }}
   ports:
-    - port: {{ .Values.dbWrapper.service.port }}
-      targetPort: {{ .Values.dbWrapper.service.port }}
+    - port: {{ .values.dbWrapper.service.port }}
+      targetPort: {{ .values.dbWrapper.service.port }}
   type: ClusterIP

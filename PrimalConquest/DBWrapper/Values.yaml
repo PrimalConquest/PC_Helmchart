@@ -1,7 +1,7 @@
-global:
-  registry: ad04a
-  imagePullPolicy: Always
-  namespace: db-wrapper
+#global:
+#  registry: ad04a
+#  imagePullPolicy: Always
+#  namespace: db-wrapper
 
 
 
