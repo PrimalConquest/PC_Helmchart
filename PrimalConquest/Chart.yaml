@@ -1,5 +1,5 @@
 apiVersion: v2
-name: game-platform
+name: primal-conquest
 description: >
   Umbrella Helm chart for the SimulationEngine game platform.
   Installs Agones fleet + autoscaler, PostgreSQL, the Database Service,

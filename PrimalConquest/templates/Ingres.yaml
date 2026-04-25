@@ -1,0 +1,80 @@
+{{- if .Values.ingress.enabled }}
+
+# ── HTTP IngressRoute — redirect everything to HTTPS ─────────────────────────
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: {{ .Release.Name }}-http
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    app: {{ .Release.Name }}
+spec:
+  entryPoints:
+    - web
+  routes:
+    - match: Host(`{{ .Values.ingress.host }}`)
+      kind: Rule
+      middlewares:
+        - name: {{ .Release.Name }}-redirect-https
+      #services:
+      #  - name: {{ .Release.Name }}-matchmaking
+      #    port: {{ .Values.matchmaking.service.port }}
+ 
+---
+# ── HTTPS IngressRoute — main routing ────────────────────────────────────────
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: {{ .Release.Name }}-https
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    app: {{ .Release.Name }}
+spec:
+  entryPoints:
+    - websecure
+  {{- if .Values.ingress.tls.enabled }}
+  tls:
+    secretName: {{ .Values.ingress.tls.secretName }}
+  {{- end }}
+  routes:
+    # Matchmaking queue (public)
+    - match: Host(`{{ .Values.ingress.host }}`) && PathPrefix(`/api/matchmaking`)
+      kind: Rule
+      middlewares:
+        - name: {{ .Release.Name }}-strip-prefix
+        - name: {{ .Release.Name }}-ratelimit
+      services:
+        - name: {{ .Release.Name }}-matchmaking
+          port: {{ .Values.matchmaking.service.port }}
+ 
+    # Loadout CRUD (admin/internal only)
+    - match: Host(`{{ .Values.ingress.host }}`) && PathPrefix(`/api/loadout`)
+      kind: Rule
+      middlewares:
+        - name: {{ .Release.Name }}-strip-prefix
+        #- name: {{ .Release.Name }}-admin-allowlist
+      services:
+        - name: {{ .Release.Name }}-database
+          port: {{ .Values.dbWrapper.service.port }}
+ 
+{{- if .Values.ingress.tls.certManager.enabled }}
+---
+# ── cert-manager Certificate ──────────────────────────────────────────────────
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: {{ .Release.Name }}-tls-cert
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    app: {{ .Release.Name }}
+spec:
+  secretName: {{ .Values.ingress.tls.secretName }}
+  issuerRef:
+    name: {{ .Values.ingress.tls.certManager.issuerName }}
+    kind: {{ .Values.ingress.tls.certManager.issuerKind }}
+  dnsNames:
+    - {{ .Values.ingress.host }}
+{{- end }}
+
+
+{{- end }}

@@ -2,7 +2,13 @@ global:
   registry: ad04a
   imagePullPolicy: Always
   namespace: db-wrapper
- 
+
+
+
+dbsecret:
+  name: postgres-secret
+  usernameKey: username
+  passwordKey: password 
 
 
 dbWrapper:
@@ -20,12 +26,6 @@ dbWrapper:
       cpu: "200m"
       memory: "256Mi"
 
-
-
-dbsecret:
-  name: postgres-secret
-  usernameKey: username
-  passwordKey: password
 
 
 postgres:
