@@ -1,14 +1,26 @@
-#global:
-#  registry: ad04a
-#  imagePullPolicy: Always
-#  namespace: db-wrapper
+global:
+  registry: ad04a
+  imagePullPolicy: Always
+  namespace: db-wrapper
 
-
+ingress:
+  host: localhost         # CHANGE to your real domain
+  tls:
+    enabled: false
+    secretName: game-tls
+    certManager:
+      enabled: false
+      issuerName: letsencrypt-prod
+      issuerKind: ClusterIssuer
+  adminCidr:
+    - "10.0.0.0/8"   
 
 dbsecret:
   name: postgres-secret
   usernameKey: username
   passwordKey: password 
+  username: ""
+  password: ""
 
 
 dbWrapper:
@@ -30,10 +42,10 @@ dbWrapper:
 
 postgres:
   enabled: true
-  port: 5432
+  port: "5432"
   name: gamedb
   image: postgres:18-alpine
-  storage: 5Gi
+  storage: 500Mi
   service:
     name: postgres-svc
   resources:

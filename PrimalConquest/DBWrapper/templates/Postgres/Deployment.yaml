@@ -1,10 +1,10 @@
-{{- if .values.postgres.enabled }}
+{{- if .Values.postgres.enabled }}
 
-apiVersion: v1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name:  {{ include "database.postgres.deployment.name" . }}
-  namespace: {{ .values.global.namespace }}
+  namespace: {{ .Values.global.namespace }}
   labels:
     {{- include "database.postgres.labels" . | nindent 4 }}
 spec:
@@ -20,41 +20,41 @@ spec:
         {{- include "database.postgres.labels" . | nindent 8 }}
     spec:
       containers:
-        - name: {{.values.postgres.name }}
-          image: {{ .values.postgres.image }}
+        - name: {{.Values.postgres.name }}
+          image: {{ .Values.postgres.image }}
           ports:
             - containerPort: 5432
           env:
             - name: POSTGRES_DB
-              value: {{ .values.postgres.name }}
+              value: {{ .Values.postgres.name }}
             - name: POSTGRES_USER
               valueFrom:
                 secretKeyRef:
-                  name: {{ .values.dbsecret.name }}
-                  key: {{ .values.dbsecret.usernameKey }}
+                  name: {{ .Values.dbsecret.name }}
+                  key: {{ .Values.dbsecret.usernameKey }}
             - name: POSTGRES_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: {{ .values.dbsecret.name }}
-                  key: {{ .values.dbsecret.passwordKey }}
+                  name: {{ .Values.dbsecret.name }}
+                  key: {{ .Values.dbsecret.passwordKey }}
           volumeMounts:
             - name: postgres-data
-              mountPath: /var/lib/postgresql/data
+              mountPath: /var/lib/postgresql
           resources:
             requests:
-              cpu: {{ .values.postgres.resources.requests.cpu }}
-              memory: {{ .values.postgres.resources.requests.memory }}
+              cpu: {{ .Values.postgres.resources.requests.cpu }}
+              memory: {{ .Values.postgres.resources.requests.memory }}
             limits:
-              cpu: {{ .values.postgres.resources.limits.cpu }}
-              memory: {{ .values.postgres.resources.limits.memory }}
+              cpu: {{ .Values.postgres.resources.limits.cpu }}
+              memory: {{ .Values.postgres.resources.limits.memory }}
           readinessProbe:
             exec:
-              command: ["pg_isready", "-U", {{ .values.dbsecret.username }}]
+              command: ["pg_isready", "-U", {{ .Values.dbsecret.username }}]
             initialDelaySeconds: 10
             periodSeconds: 5
       volumes:
         - name: postgres-data
           persistentVolumeClaim:
-            claimName: {{- include "database.postgres.pvc.name" . }}
+            claimName: {{ include "database.postgres.pvc.name" . }}
 
 {{- end }}

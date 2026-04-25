@@ -1,14 +1,10 @@
-global:
-  registry: ad04a                  # empty = images referenced by name only
-  imagePullPolicy: Always
- 
 ingress:
   host: localhost
   tls:
     enabled: false
     certManager:
       enabled: false
- 
+
 agones:
   enabled: true
  
@@ -19,12 +15,7 @@ agonesConfig:
     bufferSize: 1
     minReplicas: 1
     maxReplicas: 5
- 
-database:
-  postgresql:
-    credentials:
-      username: gameuser
-      password: localdev         # fine for local, not for prod
+     # fine for local, not for prod
  
 matchmaking:
   queueTimeoutSeconds: 30        # shorter timeout during development

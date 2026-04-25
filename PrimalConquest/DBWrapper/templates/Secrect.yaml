@@ -1,16 +1,16 @@
-{{- if .values.postgres.enabled }}
+{{- if .Values.postgres.enabled }}
 apiVersion: v1
 kind: Secret
 metadata:
-  name: {{ .values.dbsecret.name }}
-  namespace: {{ .values.global.namespace }}
+  name: {{ .Values.dbsecret.name }}
+  namespace: {{ .Values.global.namespace }}
   labels:
-    {{- include "database.labels" . | nindent 4 }}
+    {{- include "database.postgres.labels" . | nindent 4 }}
   annotations:
     # Prevent Helm from overwriting credentials on upgrade
     helm.sh/resource-policy: keep
 type: Opaque
 stringData:
-  username: {{ .values.dbsecret.username }}
-  password: {{ .values.dbsecret.password }}
+  username: {{ .Values.dbsecret.username }}
+  password: {{ .Values.dbsecret.password }}
 {{- end }}

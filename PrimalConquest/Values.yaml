@@ -2,18 +2,22 @@
 global:
   registry: ad04a       
   imagePullPolicy: Always
-  namespace: PrimalConquest
+  namespace: primal-conquest
  
+
+ingress:
+  enabled: true
+
 # ── Agones (upstream chart) ───────────────────────────────────────────────────
 agones:
   enabled: true
-  # Pass-through values for the upstream agones chart.
+  # Pass-through Values for the upstream agones chart.
   # Full list: https://agones.dev/site/docs/installation/install-agones/helm/
   agones:
     featureGates: ""
   gameservers:
     namespaces:
-      - PrimalConquest
+      - primal-conquest
  
 # ── Agones Fleet + Autoscaler (our subchart) ─────────────────────────────────
 #agonesConfig:
@@ -44,39 +48,3 @@ agones:
 #    bufferSize: 2
 #    minReplicas: 2
 #    maxReplicas: 20
- 
-# ── Database subchart ─────────────────────────────────────────────────────────
-database:
-  enabled: true
-#  
-#  dbWrapper:
-#    name: database-wrapper
-#    image:
-#      repository: primal-conquest-db-wrapper
-#      tag: latest
-#    service:
-#      port: 5000
-#    resources:
-#      requests:
-#        cpu: "50m"
-#        memory: "64Mi"
-#      limits:
-#        cpu: "200m"
-#        memory: "256Mi"
-
-
-#postgres:
-#  enabled: true
-#  port: 5432
-#  name: gamedb
-#  image: postgres:18-alpine
-#  storage: 5Gi
-#  service:
-#    name: postgres-svc
-#  resources:
-#    requests:
-#      cpu: "100m"
-#      memory: "256Mi"
-#    limits:
-#      cpu: "500m"
-#      memory: "512Mi"

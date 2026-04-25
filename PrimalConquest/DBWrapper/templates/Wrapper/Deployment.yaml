@@ -1,8 +1,9 @@
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ include "database.wrapper.deployment.name" . }}
-  namespace: {{ .values.global.namespace}}
+  namespace: {{ .Values.global.namespace}}
   labels:
     {{- include "database.wrapper.labels" . | nindent 4 }}
 spec:
@@ -16,40 +17,40 @@ spec:
         {{- include "database.wrapper.labels" . | nindent 8 }}
     spec:
       containers:
-        - name: {{ .values.dbWrapper.name }}
+        - name: {{ .Values.dbWrapper.name }}
           image: {{ include "database.wrapper.image" . }}
-          imagePullPolicy: {{ .values.global.imagePullPolicy }}
+          imagePullPolicy: {{ .Values.global.imagePullPolicy }}
           ports:
-            - containerPort: {{ .values.dbWrapper.service.port }}
+            - containerPort: {{ .Values.dbWrapper.service.port }}
           env:
             - name: ASPNETCORE_URLS
-              value: "http://+:{{ .values.dbWrapper.service.port }}"
+              value: "http://+:{{ .Values.dbWrapper.service.port }}"
             - name: DB_HOST
               value: {{ include "database.postgres.service.name" . }}
             - name: DB_PORT
-              value: {{ .values.postgres.port }}
+              value: {{ .Values.postgres.port | quote }}
             - name: DB_NAME
-              value: {{ .values.postgres.name }}
+              value: {{ .Values.postgres.name | quote }}
             - name: DB_USER
               valueFrom:
                 secretKeyRef:
-                  name: {{ .values.dbsecret.name }}
-                  key: {{ .values.dbsecret.usernameKey }}
+                  name: {{ .Values.dbsecret.name }}
+                  key: {{ .Values.dbsecret.usernameKey }}
             - name: DB_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: {{ .values.dbsecret.name }}
-                  key: {{ .values.dbsecret.passwordKey }}
+                  name: {{ .Values.dbsecret.name }}
+                  key: {{ .Values.dbsecret.passwordKey }}
           resources:
             requests:
-              cpu: {{ .values.dbWrapper.resources.requests.cpu | quote }}
-              memory: {{ .values.dbWrapper.resources.requests.memory | quote }}
+              cpu: {{ .Values.dbWrapper.resources.requests.cpu | quote }}
+              memory: {{ .Values.dbWrapper.resources.requests.memory | quote }}
             limits:
-              cpu: {{ .values.dbWrapper.resources.limits.cpu | quote }}
-              memory: {{ .values.dbWrapper.resources.limits.memory | quote }}
+              cpu: {{ .Values.dbWrapper.resources.limits.cpu | quote }}
+              memory: {{ .Values.dbWrapper.resources.limits.memory | quote }}
           readinessProbe:
             httpGet:
               path: /healthz
-              port: {{ .values.dbWrapper.service.port }}
+              port: {{ .Values.dbWrapper.service.port }}
             initialDelaySeconds: 10
             periodSeconds: 5
