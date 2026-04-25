@@ -34,3 +34,14 @@ app: {{.Release.Name}}-{{ .Values.dbWrapper.name }}
 {{- define "database.wrapper.service.name" -}}
 {{ .Release.Name }}-service-{{ .Values.dbWrapper.name }}
 {{- end }}
+
+
+
+
+{{- define "database.ingress.name" -}}
+{{ .Release.Name }}-ingress-db
+{{- end }}
+
+{{- define "database.middleware.strip" -}}
+{{ .Release.Name }}-strip-db
+{{- end }}

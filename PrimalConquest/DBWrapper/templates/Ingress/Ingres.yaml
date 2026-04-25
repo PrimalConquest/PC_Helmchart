@@ -1,40 +1,27 @@
 
-# ── Database / Loadout Ingress (restricted) ───────────────────────────────────
-# Handles /api/db → database service
-# Locked to admin IPs via Traefik middleware annotation.
-apiVersion: networking.k8s.io/v1
-kind: Ingress
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
 metadata:
-  name: {{ .Release.Name }}-ingress-db
+  name: {{ include "database.ingress.name" . }}
   namespace: {{ .Values.global.namespace }}
-  labels:
-    app: {{.Release.Name}}-ingress-db
-  annotations:
-    #traefik.ingress.kubernetes.io/router.middlewares: >-
-    #  {{ .Values.global.namespace }}-{{ .Release.Name }}-strip-db@kubernetescrd
-    {{- if .Values.ingress.tls.enabled }}
-    traefik.ingress.kubernetes.io/router.entrypoints: websecure
-    traefik.ingress.kubernetes.io/router.tls: "true"
-    {{- else }}
-    traefik.ingress.kubernetes.io/router.entrypoints: web
-    {{- end }}
 spec:
-  ingressClassName: traefik
-  {{- if .Values.ingress.tls.enabled }}
+  entryPoints:
+    {{- if .Values.global.ingress.tls.enabled }}
+    - websecure
+    {{- else }}
+    - web
+    {{- end }}
+
+  {{- if .Values.global.ingress.tls.enabled }}
   tls:
-    - hosts:
-        - {{ .Values.ingress.host }}
-      secretName: {{ .Values.ingress.tls.secretName }}
+    secretName: {{ .Values.global.ingress.tls.secretName }}
   {{- end }}
-  rules:
-    - host: {{ .Values.ingress.host }}
-      http:
-        paths:
-          - path: /api/db
-            pathType: Prefix
-            backend:
-              service:
-                name: {{ include "database.wrapper.service.name" . }}
-                port:
-                  number: {{ .Values.dbWrapper.service.port }}
- 
+
+  routes:
+    - match: Host(`{{ .Values.global.ingress.host }}`) && PathPrefix(`/api/db`)
+      kind: Rule
+      middlewares:
+        - name: {{ include "database.middleware.strip" . }}
+      services:
+        - name: {{ include "database.wrapper.service.name" . }}
+          port: {{ .Values.dbWrapper.service.port }}

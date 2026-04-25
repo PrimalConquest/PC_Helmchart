@@ -3,17 +3,17 @@ global:
   imagePullPolicy: Always
   namespace: db-wrapper
 
-ingress:
-  host: localhost         # CHANGE to your real domain
-  tls:
-    enabled: false
-    secretName: game-tls
-    certManager:
+  ingress:
+    host: localhost         # CHANGE to your real domain
+    tls:
       enabled: false
-      issuerName: letsencrypt-prod
-      issuerKind: ClusterIssuer
-  adminCidr:
-    - "10.0.0.0/8"   
+      secretName: game-tls
+      certManager:
+        enabled: false
+        issuerName: letsencrypt-prod
+        issuerKind: ClusterIssuer
+    adminCidr:
+      - "10.0.0.0/8"   
 
 dbsecret:
   name: postgres-secret

@@ -1,9 +1,10 @@
-ingress:
-  host: localhost
-  tls:
-    enabled: false
-    certManager:
+global:
+  ingress:
+    host: 172.21.44.89
+    tls:
       enabled: false
+      certManager:
+        enabled: false
 
 agones:
   enabled: true

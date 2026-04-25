@@ -5,9 +5,6 @@ global:
   namespace: primal-conquest
  
 
-ingress:
-  enabled: true
-
 # ── Agones (upstream chart) ───────────────────────────────────────────────────
 agones:
   enabled: true
