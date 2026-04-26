@@ -18,5 +18,10 @@ agonesConfig:
     maxReplicas: 5
      # fine for local, not for prod
  
+database:
+  authsecret:
+    jwtSecret: ""          # FILL IN — min 32 chars, e.g. openssl rand -base64 32
+    internalApiKey: ""     # FILL IN — shared key for pod-to-pod calls, e.g. openssl rand -hex 20
+
 matchmaking:
   queueTimeoutSeconds: 30        # shorter timeout during development

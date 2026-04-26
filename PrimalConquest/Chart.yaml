@@ -26,8 +26,8 @@ dependencies:
     repository: "file://./DBWrapper"
     condition: database.enabled
  
-  #- name: matchmaking
-  #  version: "0.1.0"
-  #  repository: "file://charts/matchmaking"
-  #  condition: matchmaking.enabled
+  - name: matchmaking
+    version: "0.1.0"
+    repository: "file://./Matchmaking"
+    condition: matchmaking.enabled
  

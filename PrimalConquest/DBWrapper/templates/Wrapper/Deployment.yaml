@@ -41,6 +41,26 @@ spec:
                 secretKeyRef:
                   name: {{ .Values.dbsecret.name }}
                   key: {{ .Values.dbsecret.passwordKey }}
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.authsecret.name }}
+                  key: {{ .Values.authsecret.jwtSecretKey }}
+            - name: JWT_ISSUER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.authsecret.name }}
+                  key: {{ .Values.authsecret.jwtIssuerKey }}
+            - name: JWT_AUDIENCE
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.authsecret.name }}
+                  key: {{ .Values.authsecret.jwtAudienceKey }}
+            - name: INTERNAL_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.authsecret.name }}
+                  key: {{ .Values.authsecret.internalApiKeyKey }}
           resources:
             requests:
               cpu: {{ .Values.dbWrapper.resources.requests.cpu | quote }}

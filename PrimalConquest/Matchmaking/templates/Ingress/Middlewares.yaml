@@ -1,0 +1,11 @@
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: {{ include "matchmaking.middleware.strip" . }}
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    app: {{ .Release.Name }}
+spec:
+  stripPrefix:
+    prefixes:
+      - /api/mm

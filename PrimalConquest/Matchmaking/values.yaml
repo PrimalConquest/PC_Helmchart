@@ -1,0 +1,42 @@
+global:
+  registry: ad04a
+  imagePullPolicy: Always
+  namespace: primal-conquest
+  ingress:
+    host: localhost
+    tls:
+      enabled: false
+      secretName: game-tls
+
+matchmaking:
+  name: matchmaking
+  image:
+    repository: primal-conquest-matchmaking
+    tag: latest
+  service:
+    port: 5001
+  # Internal cluster URL of the DBWrapper service.
+  # Pattern: {release-name}-service-database-wrapper.{namespace}.svc.cluster.local:{port}
+  # Set this in values.local.yaml / values.prod.yaml once you know your release name.
+  dbWrapperUrl: "http://primal-conquest-service-database-wrapper.primal-conquest.svc.cluster.local:5000"
+  resources:
+    requests:
+      cpu: "50m"
+      memory: "64Mi"
+    limits:
+      cpu: "200m"
+      memory: "256Mi"
+
+# References the same auth-secret created by the DBWrapper subchart.
+# Key names must match exactly what DBWrapper's AuthSecrect.yaml writes.
+authsecret:
+  name: auth-secret
+  jwtSecretKey: jwt-secret
+  jwtIssuerKey: jwt-issuer
+  jwtAudienceKey: jwt-audience
+  internalApiKeyKey: internal-api-key
+
+rbac:
+  serviceAccountName: matchmaking-sa
+  roleName: matchmaking-agones-role
+  roleBindingName: matchmaking-agones-binding

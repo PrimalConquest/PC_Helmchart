@@ -22,6 +22,9 @@ agonesConfig:
     maxReplicas: 100
  
 database:
+  authsecret:
+    jwtSecret: ""          # FILL IN — inject via CI secret or: helm upgrade ... --set database.authsecret.jwtSecret=$JWT_SECRET
+    internalApiKey: ""     # FILL IN — inject via CI secret or: helm upgrade ... --set database.authsecret.internalApiKey=$INTERNAL_KEY
   dwWrapper:
     resources:
       requests:

@@ -45,3 +45,7 @@ agones:
 #    bufferSize: 2
 #    minReplicas: 2
 #    maxReplicas: 20
+
+# ── Matchmaking service ───────────────────────────────────────────────────────
+matchmaking:
+  enabled: true

@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "matchmaking.service.name" . }}
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    {{- include "matchmaking.labels" . | nindent 4 }}
+spec:
+  selector:
+    {{- include "matchmaking.labels" . | nindent 4 }}
+  ports:
+    - port: {{ .Values.matchmaking.service.port }}
+      targetPort: {{ .Values.matchmaking.service.port }}
+  type: ClusterIP

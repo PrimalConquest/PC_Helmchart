@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "matchmaking.deployment.name" . }}
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    {{- include "matchmaking.labels" . | nindent 4 }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "matchmaking.labels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "matchmaking.labels" . | nindent 8 }}
+    spec:
+      serviceAccountName: {{ .Values.rbac.serviceAccountName }}
+      containers:
+        - name: {{ .Values.matchmaking.name }}
+          image: {{ include "matchmaking.image" . }}
+          imagePullPolicy: {{ .Values.global.imagePullPolicy }}
+          ports:
+            - containerPort: {{ .Values.matchmaking.service.port }}
+          env:
+            - name: ASPNETCORE_URLS
+              value: "http://+:{{ .Values.matchmaking.service.port }}"
+            - name: DB_WRAPPER_URL
+              value: {{ .Values.matchmaking.dbWrapperUrl | quote }}
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.authsecret.name }}
+                  key: {{ .Values.authsecret.jwtSecretKey }}
+            - name: JWT_ISSUER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.authsecret.name }}
+                  key: {{ .Values.authsecret.jwtIssuerKey }}
+            - name: JWT_AUDIENCE
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.authsecret.name }}
+                  key: {{ .Values.authsecret.jwtAudienceKey }}
+            - name: INTERNAL_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.authsecret.name }}
+                  key: {{ .Values.authsecret.internalApiKeyKey }}
+          resources:
+            requests:
+              cpu: {{ .Values.matchmaking.resources.requests.cpu | quote }}
+              memory: {{ .Values.matchmaking.resources.requests.memory | quote }}
+            limits:
+              cpu: {{ .Values.matchmaking.resources.limits.cpu | quote }}
+              memory: {{ .Values.matchmaking.resources.limits.memory | quote }}
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: {{ .Values.matchmaking.service.port }}
+            initialDelaySeconds: 10
+            periodSeconds: 5

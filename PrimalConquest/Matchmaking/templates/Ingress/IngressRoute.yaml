@@ -1,8 +1,7 @@
-
 apiVersion: traefik.io/v1alpha1
 kind: IngressRoute
 metadata:
-  name: {{ include "database.ingress.name" . }}
+  name: {{ include "matchmaking.ingress.name" . }}
   namespace: {{ .Values.global.namespace }}
 spec:
   entryPoints:
@@ -18,10 +17,10 @@ spec:
   {{- end }}
 
   routes:
-    - match: (Host(`{{ .Values.global.ingress.host }}`) || Host(`https://disclose-recital-aversion.ngrok-free.dev`)) && PathPrefix(`/api/db`)
+    - match: (Host(`{{ .Values.global.ingress.host }}`) || Host(`https://disclose-recital-aversion.ngrok-free.dev`)) && PathPrefix(`/api/mm`)
       kind: Rule
       middlewares:
-        - name: {{ include "database.middleware.strip" . }}
+        - name: {{ include "matchmaking.middleware.strip" . }}
       services:
-        - name: {{ include "database.wrapper.service.name" . }}
-          port: {{ .Values.dbWrapper.service.port }}
+        - name: {{ include "matchmaking.service.name" . }}
+          port: {{ .Values.matchmaking.service.port }}

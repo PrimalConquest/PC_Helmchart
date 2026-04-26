@@ -18,9 +18,22 @@ global:
 dbsecret:
   name: postgres-secret
   usernameKey: username
-  passwordKey: password 
+  passwordKey: password
   username: ""
   password: ""
+
+authsecret:
+  name: auth-secret
+  # Key names referenced by Deployments — change only if you rename keys in the Secret
+  jwtSecretKey: jwt-secret
+  jwtIssuerKey: jwt-issuer
+  jwtAudienceKey: jwt-audience
+  internalApiKeyKey: internal-api-key
+  # Non-sensitive defaults — override jwtSecret and internalApiKey in values.local/prod.yaml
+  jwtSecret: ""
+  jwtIssuer: "primal-conquest"
+  jwtAudience: "primal-conquest-client"
+  internalApiKey: ""
 
 
 dbWrapper:
