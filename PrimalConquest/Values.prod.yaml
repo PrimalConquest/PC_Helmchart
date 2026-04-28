@@ -4,14 +4,13 @@ global:
 ingress:
   host: 178.105.78.86         # CHANGE to your real domain
   tls:
-    enabled: true
+    enabled: false
     secretName: game-tls
     certManager:
-      enabled: true
+      enabled: false
       issuerName: letsencrypt-prod
       issuerKind: ClusterIssuer
-  adminCidr:
-    - "10.0.0.0/8"               # internal VPN/cluster only — no localhost
+                    # internal VPN/cluster only — no localhost
  
 agonesConfig:
   fleet:
