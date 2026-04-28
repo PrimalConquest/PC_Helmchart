@@ -1,16 +1,14 @@
 global:
   imagePullPolicy: Always
- 
-ingress:
-  host: 178.105.78.86         # CHANGE to your real domain
-  tls:
-    enabled: false
-    secretName: game-tls
-    certManager:
+  ingress:
+    host: 178.105.78.86
+    tls:
       enabled: false
-      issuerName: letsencrypt-prod
-      issuerKind: ClusterIssuer
-                    # internal VPN/cluster only — no localhost
+      secretName: game-tls
+      certManager:
+        enabled: false
+        issuerName: letsencrypt-prod
+        issuerKind: ClusterIssuer
  
 agonesConfig:
   fleet:
