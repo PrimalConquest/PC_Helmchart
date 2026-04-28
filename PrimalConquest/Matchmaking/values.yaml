@@ -15,10 +15,9 @@ matchmaking:
     tag: latest
   service:
     port: 5001
-  # Internal cluster URL of the DBWrapper service.
-  # Pattern: {release-name}-service-database-wrapper.{namespace}.svc.cluster.local:{port}
-  # Set this in values.local.yaml / values.prod.yaml once you know your release name.
-  dbWrapperUrl: "http://primal-conquest-service-database-wrapper.primal-conquest.svc.cluster.local:5000"
+  # Port of the DBWrapper Kubernetes service. The URL is computed dynamically
+  # from .Release.Name and .Values.global.namespace — no manual IP or hostname needed.
+  dbWrapperPort: 5000
   resources:
     requests:
       cpu: "50m"

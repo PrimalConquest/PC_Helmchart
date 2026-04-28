@@ -26,7 +26,7 @@ spec:
             - name: ASPNETCORE_URLS
               value: "http://+:{{ .Values.matchmaking.service.port }}"
             - name: DB_WRAPPER_URL
-              value: {{ .Values.matchmaking.dbWrapperUrl | quote }}
+              value: "http://{{ .Release.Name }}-service-database-wrapper.{{ .Values.global.namespace }}.svc.cluster.local:{{ .Values.matchmaking.dbWrapperPort }}"
             - name: JWT_SECRET
               valueFrom:
                 secretKeyRef:

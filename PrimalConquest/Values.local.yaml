@@ -20,8 +20,8 @@ agonesConfig:
  
 database:
   authsecret:
-    jwtSecret: ""          # FILL IN — min 32 chars, e.g. openssl rand -base64 32
-    internalApiKey: ""     # FILL IN — shared key for pod-to-pod calls, e.g. openssl rand -hex 20
+    jwtSecret: "VtectquSxoM6e3g4xfZH3oGzLP9u45pX1gAuMXys+qs="          # FILL IN once — min 32 chars: openssl rand -base64 32
+    internalApiKey: "1a17c986bee282a8bd95af4471a8e184931da6fb"     # FILL IN once — any non-empty string: openssl rand -hex 20
 
 matchmaking:
   queueTimeoutSeconds: 30        # shorter timeout during development
