@@ -2,7 +2,7 @@ global:
   imagePullPolicy: Always
  
 ingress:
-  host: game.example.com         # CHANGE to your real domain
+  host: 178.105.78.86         # CHANGE to your real domain
   tls:
     enabled: true
     secretName: game-tls
