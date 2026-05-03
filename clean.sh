@@ -7,15 +7,6 @@ echo "========================================"
 echo "  Primal Conquest — Full Clean"
 echo "========================================"
 
-# ── Uninstall Helm releases ───────────────────────────────────────
-echo ""
-echo ">>> Uninstalling Helm release '$RELEASE_NAME'..."
-sudo helm uninstall "$RELEASE_NAME" --kubeconfig "$KUBECONFIG" 2>/dev/null \
-  && echo "    Done." || echo "    Not found, skipping."
-
-echo ">>> Uninstalling Helm release 'agones'..."
-sudo helm uninstall agones -n agones-system --kubeconfig "$KUBECONFIG" 2>/dev/null \
-  && echo "    Done." || echo "    Not found, skipping."
 
 # ── Delete all resources in the game namespace ────────────────────
 echo ""
@@ -66,6 +57,17 @@ kubectl get clusterrole --kubeconfig "$KUBECONFIG" 2>/dev/null \
 kubectl get clusterrolebinding --kubeconfig "$KUBECONFIG" 2>/dev/null \
   | grep agones | awk '{print $1}' \
   | xargs -r kubectl delete clusterrolebinding --kubeconfig "$KUBECONFIG" 2>/dev/null || true
+
+# ── Uninstall Helm releases ───────────────────────────────────────
+echo ""
+echo ">>> Uninstalling Helm release '$RELEASE_NAME'..."
+sudo helm uninstall "$RELEASE_NAME" --kubeconfig "$KUBECONFIG" 2>/dev/null \
+  && echo "    Done." || echo "    Not found, skipping."
+
+echo ">>> Uninstalling Helm release 'agones'..."
+sudo helm uninstall agones -n agones-system --kubeconfig "$KUBECONFIG" 2>/dev/null \
+  && echo "    Done." || echo "    Not found, skipping."
+
 
 # ── Delete namespaces ─────────────────────────────────────────────
 echo ""
