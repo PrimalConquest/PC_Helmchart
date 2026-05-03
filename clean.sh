@@ -107,14 +107,33 @@ kubectl get clusterrolebinding --kubeconfig "$KUBECONFIG" 2>/dev/null \
   | xargs -r kubectl delete clusterrolebinding --kubeconfig "$KUBECONFIG" 2>/dev/null || true
 
 # ── Uninstall Helm releases ───────────────────────────────────────
+# --no-hooks skips pre/post-delete hooks so Helm doesn't wait on stuck resources.
+# If it still fails we force-remove the release by deleting the Helm state secret.
 echo ""
 echo ">>> Uninstalling Helm release '$RELEASE_NAME'..."
-sudo helm uninstall "$RELEASE_NAME" --kubeconfig "$KUBECONFIG" 2>/dev/null \
-  && echo "    Done." || echo "    Not found, skipping."
+sudo helm uninstall "$RELEASE_NAME" --kubeconfig "$KUBECONFIG" \
+  --no-hooks --timeout 30s 2>/dev/null \
+  && echo "    Done." \
+  || {
+    echo "    helm uninstall timed out — force-removing release record..."
+    kubectl delete secret -n "$NAMESPACE" \
+      -l "owner=helm,name=$RELEASE_NAME" \
+      --kubeconfig "$KUBECONFIG" 2>/dev/null || true
+    kubectl delete secret -n default \
+      -l "owner=helm,name=$RELEASE_NAME" \
+      --kubeconfig "$KUBECONFIG" 2>/dev/null || true
+  }
 
 echo ">>> Uninstalling Helm release 'agones'..."
-sudo helm uninstall agones -n agones-system --kubeconfig "$KUBECONFIG" 2>/dev/null \
-  && echo "    Done." || echo "    Not found, skipping."
+sudo helm uninstall agones -n agones-system --kubeconfig "$KUBECONFIG" \
+  --no-hooks --timeout 30s 2>/dev/null \
+  && echo "    Done." \
+  || {
+    echo "    helm uninstall timed out — force-removing release record..."
+    kubectl delete secret -n agones-system \
+      -l "owner=helm,name=agones" \
+      --kubeconfig "$KUBECONFIG" 2>/dev/null || true
+  }
 
 # ── Delete namespaces ─────────────────────────────────────────────
 echo ""
