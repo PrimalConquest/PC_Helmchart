@@ -22,16 +22,21 @@ strip_finalizers() {
     done
 }
 
-# Strip finalizers from a namespace itself (prevents namespace getting stuck
-# in Terminating state forever).
+# Force a namespace out of Terminating by clearing both metadata and spec
+# finalizers via the /finalize API endpoint — the only reliable method.
 strip_namespace_finalizers() {
   local ns=$1
-  echo "    Stripping finalizers from namespace '$ns'..."
+  echo "    Force-removing finalizers from namespace '$ns'..."
   kubectl patch namespace "$ns" --kubeconfig "$KUBECONFIG" \
     --type=merge -p '{"metadata":{"finalizers":[]}}' 2>/dev/null || true
-  # Also clear the spec.finalizers array used by namespace controllers
   kubectl get namespace "$ns" --kubeconfig "$KUBECONFIG" -o json 2>/dev/null \
-    | sed 's/"finalizers": \[[^]]*\]/"finalizers": []/' \
+    | python3 -c "
+import sys, json
+d = json.load(sys.stdin)
+d['spec']['finalizers'] = []
+d.get('metadata', {})['finalizers'] = []
+print(json.dumps(d))
+" \
     | kubectl replace --raw "/api/v1/namespaces/$ns/finalize" \
         --kubeconfig "$KUBECONFIG" -f - 2>/dev/null || true
 }
