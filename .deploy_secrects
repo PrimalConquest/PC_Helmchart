@@ -1,4 +1,0 @@
-export JWT_SECRET=""
-export INTERNAL_API_KEY=""
-export DB_USERNAME=""
-export DB_PASSWORD=""
