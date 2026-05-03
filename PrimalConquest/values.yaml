@@ -3,6 +3,7 @@ global:
   registry: ad04a       
   imagePullPolicy: Always
   namespace: primal-conquest
+  dbWrapperPort: 5000
  
 
 # ── Agones (upstream chart) ───────────────────────────────────────────────────
@@ -16,35 +17,32 @@ agones:
     namespaces:
       - primal-conquest
  
-# ── Agones Fleet + Autoscaler (our subchart) ─────────────────────────────────
-#agonesConfig:
-#  enabled: true
-# 
-#  fleet:
-#    name: battle-server-fleet
-#    replicas: 2                   # warm pool size
-#    image:
-#      repository: battle-server   # prepended with global.registry
-#      tag: latest
-#    port:
-#      name: signalr
-#      containerPort: 8080
-#    resources:
-#      requests:
-#        cpu: "100m"
-#        memory: "128Mi"
-#      limits:
-#        cpu: "500m"
-#        memory: "512Mi"
-#    health:
-#      initialDelaySeconds: 30
-#      periodSeconds: 10
-#      failureThreshold: 5
-# 
-#  autoscaler:
-#    bufferSize: 2
-#    minReplicas: 2
-#    maxReplicas: 20
+# ── Agones Fleet + Autoscaler ─────────────────────────────────────────────────
+agonesConfig:
+  fleet:
+    name: battle-server-fleet
+    replicas: 2
+    image:
+      repository: primal-conquest-battle-server
+      tag: latest
+    port:
+      name: signalr
+      containerPort: 8080
+    resources:
+      requests:
+        cpu: "100m"
+        memory: "128Mi"
+      limits:
+        cpu: "500m"
+        memory: "512Mi"
+    health:
+      initialDelaySeconds: 30
+      periodSeconds: 5
+      failureThreshold: 3
+  autoscaler:
+    bufferSize: 2
+    minReplicas: 2
+    maxReplicas: 20
 
 # ── Matchmaking service ───────────────────────────────────────────────────────
 matchmaking:

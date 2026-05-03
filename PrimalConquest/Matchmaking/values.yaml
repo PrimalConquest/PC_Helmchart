@@ -7,6 +7,7 @@ global:
     tls:
       enabled: false
       secretName: game-tls
+  dbWrapperPort: 5000
 
 matchmaking:
   name: matchmaking
@@ -17,7 +18,6 @@ matchmaking:
     port: 5001
   # Port of the DBWrapper Kubernetes service. The URL is computed dynamically
   # from .Release.Name and .Values.global.namespace — no manual IP or hostname needed.
-  dbWrapperPort: 5000
   resources:
     requests:
       cpu: "50m"
