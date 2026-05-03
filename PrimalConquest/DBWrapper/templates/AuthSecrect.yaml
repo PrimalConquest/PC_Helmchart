@@ -5,9 +5,6 @@ metadata:
   namespace: {{ .Values.global.namespace }}
   labels:
     {{- include "database.wrapper.labels" . | nindent 4 }}
-  annotations:
-    # Prevent Helm from wiping credentials on upgrade
-    helm.sh/resource-policy: keep
 type: Opaque
 stringData:
   {{ .Values.authsecret.jwtSecretKey }}: {{ .Values.authsecret.jwtSecret | quote }}
