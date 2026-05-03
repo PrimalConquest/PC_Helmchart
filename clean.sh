@@ -54,10 +54,12 @@ strip_finalizers pods           agones-system
 # ── Delete all resources in the game namespace ────────────────────
 echo ""
 echo ">>> Deleting all resources in namespace '$NAMESPACE'..."
-kubectl delete all --all -n "$NAMESPACE" --kubeconfig "$KUBECONFIG" 2>/dev/null || true
+kubectl delete all --all -n "$NAMESPACE" --kubeconfig "$KUBECONFIG" \
+  --wait=false 2>/dev/null || true
 
 echo ">>> Deleting PersistentVolumeClaims..."
-kubectl delete pvc --all -n "$NAMESPACE" --kubeconfig "$KUBECONFIG" 2>/dev/null || true
+kubectl delete pvc --all -n "$NAMESPACE" --kubeconfig "$KUBECONFIG" \
+  --wait=false 2>/dev/null || true
 
 echo ">>> Deleting Secrets..."
 kubectl delete secret --all -n "$NAMESPACE" --kubeconfig "$KUBECONFIG" 2>/dev/null || true
@@ -81,7 +83,8 @@ kubectl delete gameservers      --all -n "$NAMESPACE" --kubeconfig "$KUBECONFIG"
 # ── Wipe agones-system namespace resources ────────────────────────
 echo ""
 echo ">>> Deleting all resources in namespace 'agones-system'..."
-kubectl delete all --all -n agones-system --kubeconfig "$KUBECONFIG" 2>/dev/null || true
+kubectl delete all --all -n agones-system --kubeconfig "$KUBECONFIG" \
+  --wait=false 2>/dev/null || true
 kubectl delete secret --all -n agones-system --kubeconfig "$KUBECONFIG" 2>/dev/null || true
 kubectl delete configmap --all -n agones-system --kubeconfig "$KUBECONFIG" 2>/dev/null || true
 kubectl delete serviceaccount --all -n agones-system --kubeconfig "$KUBECONFIG" 2>/dev/null || true
@@ -150,12 +153,14 @@ sudo helm uninstall agones -n agones-system --kubeconfig "$KUBECONFIG" \
 echo ""
 strip_namespace_finalizers "$NAMESPACE"
 echo ">>> Deleting namespace '$NAMESPACE'..."
-kubectl delete namespace "$NAMESPACE" --kubeconfig "$KUBECONFIG" 2>/dev/null \
+kubectl delete namespace "$NAMESPACE" --kubeconfig "$KUBECONFIG" \
+  --wait=false 2>/dev/null \
   && echo "    Done." || echo "    Not found, skipping."
 
 strip_namespace_finalizers agones-system
 echo ">>> Deleting namespace 'agones-system'..."
-kubectl delete namespace agones-system --kubeconfig "$KUBECONFIG" 2>/dev/null \
+kubectl delete namespace agones-system --kubeconfig "$KUBECONFIG" \
+  --wait=false 2>/dev/null \
   && echo "    Done." || echo "    Not found, skipping."
 
 echo ""
