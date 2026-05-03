@@ -1,0 +1,12 @@
+dependencies:
+- name: agones
+  repository: https://agones.dev/chart/stable
+  version: 1.40.0
+- name: database
+  repository: file://./DBWrapper
+  version: 0.1.0
+- name: matchmaking
+  repository: file://./Matchmaking
+  version: 0.1.0
+digest: sha256:a9195704d44f46af58137e6f7af9e7e56cb4e70ed0abcf24ae0710832cba66a5
+generated: "2026-04-28T08:47:07.114666943Z"
