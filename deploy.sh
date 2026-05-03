@@ -39,6 +39,19 @@ kubectl rollout status deployment/agones-controller \
   --timeout=120s \
   --kubeconfig "$KUBECONFIG"
 
+echo ">>> Waiting for Agones webhook endpoint to be available..."
+for i in $(seq 1 30); do
+  READY=$(kubectl get endpoints agones-controller-service \
+    -n agones-system --kubeconfig "$KUBECONFIG" \
+    -o jsonpath='{.subsets[0].addresses[0].ip}' 2>/dev/null)
+  if [ -n "$READY" ]; then
+    echo "    Webhook ready."
+    break
+  fi
+  echo "    Not ready yet ($i/30), retrying in 3s..."
+  sleep 3
+done
+
 # ── Update Helm dependencies ──────────────────────────────────────
 echo ">>> Updating Helm dependencies..."
 sudo helm dependency update "$HELM_CHART_DIR"
