@@ -2,7 +2,7 @@
 set -euo pipefail
 
 # ── Config ────────────────────────────────────────────────────────
-SECRETS_FILE="./.deploy-secrets"
+SECRETS_FILE="./deploy-secrets"
 HELM_CHART_DIR="./PrimalConquest"
 HELM_PACKAGE="./primal-conquest-0.1.0.tgz"
 KUBECONFIG="/etc/rancher/k3s/k3s.yaml"
