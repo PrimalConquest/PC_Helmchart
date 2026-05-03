@@ -24,7 +24,7 @@ source "$SECRETS_FILE"
 
 # ── Pull latest chart source ──────────────────────────────────────
 echo ">>> Pulling latest changes..."
-gitn pull
+git pull
 
 # ── Update Helm dependencies ──────────────────────────────────────
 echo ">>> Updating Helm dependencies..."
