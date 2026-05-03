@@ -34,8 +34,7 @@ if ! sudo helm status agones --kubeconfig "$KUBECONFIG" -n agones-system &>/dev/
 fi
 
 echo ">>> Waiting for Agones controller to be ready..."
-kubectl wait --for=condition=ready pod \
-  -l app=agones-controller \
+kubectl rollout status deployment/agones-controller \
   -n agones-system \
   --timeout=120s \
   --kubeconfig "$KUBECONFIG"

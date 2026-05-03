@@ -48,6 +48,7 @@ strip_finalizers pods              "$NAMESPACE"
 strip_finalizers pvc               "$NAMESPACE"
 
 strip_finalizers gameservers    agones-system
+strip_finalizers gameserversets agones-system
 strip_finalizers pods           agones-system
 
 # ── Delete all resources in the game namespace ────────────────────
@@ -76,6 +77,16 @@ kubectl delete fleetautoscalers --all -n "$NAMESPACE" --kubeconfig "$KUBECONFIG"
 kubectl delete fleets           --all -n "$NAMESPACE" --kubeconfig "$KUBECONFIG" 2>/dev/null || true
 kubectl delete gameserversets   --all -n "$NAMESPACE" --kubeconfig "$KUBECONFIG" 2>/dev/null || true
 kubectl delete gameservers      --all -n "$NAMESPACE" --kubeconfig "$KUBECONFIG" 2>/dev/null || true
+
+# ── Wipe agones-system namespace resources ────────────────────────
+echo ""
+echo ">>> Deleting all resources in namespace 'agones-system'..."
+kubectl delete all --all -n agones-system --kubeconfig "$KUBECONFIG" 2>/dev/null || true
+kubectl delete secret --all -n agones-system --kubeconfig "$KUBECONFIG" 2>/dev/null || true
+kubectl delete configmap --all -n agones-system --kubeconfig "$KUBECONFIG" 2>/dev/null || true
+kubectl delete serviceaccount --all -n agones-system --kubeconfig "$KUBECONFIG" 2>/dev/null || true
+kubectl delete role --all -n agones-system --kubeconfig "$KUBECONFIG" 2>/dev/null || true
+kubectl delete rolebinding --all -n agones-system --kubeconfig "$KUBECONFIG" 2>/dev/null || true
 
 # ── Delete cluster-scoped Agones resources ────────────────────────
 echo ""
