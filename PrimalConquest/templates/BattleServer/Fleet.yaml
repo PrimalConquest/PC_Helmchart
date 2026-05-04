@@ -22,7 +22,7 @@ spec:
               imagePullPolicy: {{ .Values.global.imagePullPolicy }}
               env:
                 - name: ASPNETCORE_HTTP_PORTS
-                  value: {{ .Values.agonesConfig.fleet.port.containerPort | quote }}
+                  value: "$(SIGNALR)"
                 - name: DB_WRAPPER_URL
                   value: "http://{{ .Release.Name }}-service-database-wrapper.{{ .Values.global.namespace }}.svc.cluster.local:{{ .Values.global.dbWrapperPort }}"
                 - name: INTERNAL_API_KEY
